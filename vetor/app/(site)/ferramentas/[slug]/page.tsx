@@ -42,6 +42,7 @@ export default async function FerramentaVendaPage({ params }: Props) {
   const Icon = manifest.icone
   const emBreve = manifest.status === 'em_breve'
   const beneficios = manifest.beneficios ?? [manifest.descricao]
+  const precisa = manifest.oQueVocePrecisa ?? []
 
   return (
     <main style={{ maxWidth: 1120, margin: '0 auto', padding: '40px 24px 80px' }}>
@@ -110,7 +111,17 @@ export default async function FerramentaVendaPage({ params }: Props) {
           <p style={{ margin: '0 0 28px', color: 'var(--pedra)', fontSize: 17, lineHeight: 1.55 }}>
             {manifest.descricao}
           </p>
-          <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <p
+            style={{
+              margin: '0 0 10px',
+              fontFamily: "var(--font-mono), 'JetBrains Mono', monospace",
+              fontSize: 11,
+              color: 'var(--pedra)',
+            }}
+          >
+            o que faz
+          </p>
+          <ul style={{ margin: '0 0 28px', padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
             {beneficios.map((b) => (
               <li
                 key={b}
@@ -127,6 +138,39 @@ export default async function FerramentaVendaPage({ params }: Props) {
               </li>
             ))}
           </ul>
+
+          {precisa.length > 0 && (
+            <>
+              <p
+                style={{
+                  margin: '0 0 10px',
+                  fontFamily: "var(--font-mono), 'JetBrains Mono', monospace",
+                  fontSize: 11,
+                  color: 'var(--pedra)',
+                }}
+              >
+                o que precisa de você
+              </p>
+              <ul style={{ margin: '0 0 28px', padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {precisa.map((b) => (
+                  <li
+                    key={b}
+                    style={{
+                      display: 'flex',
+                      gap: 12,
+                      alignItems: 'flex-start',
+                      fontSize: 15,
+                      lineHeight: 1.45,
+                      color: 'var(--pedra)',
+                    }}
+                  >
+                    <span style={{ color: 'var(--carvao)', fontWeight: 700, flex: 'none' }}>·</span>
+                    {b}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
 
           {!emBreve && (
             <p style={{ marginTop: 28, fontSize: 14, color: 'var(--pedra)' }}>

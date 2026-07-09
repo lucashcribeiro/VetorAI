@@ -22,6 +22,8 @@ export interface ModuleManifest {
   headlineVenda?: string
   /** 3–5 benefícios em língua de dono. */
   beneficios?: string[]
+  /** O que o cliente precisa fornecer para a ferramenta funcionar (Fase 7). */
+  oQueVocePrecisa?: string[]
 }
 
 export interface ModuleUiProps {

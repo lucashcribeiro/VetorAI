@@ -16,4 +16,9 @@ export const manifest: ModuleManifest = {
     'Três ações prioritárias para o mês que vem',
     'Pronto para imprimir ou mandar pro sócio',
   ],
+  oQueVocePrecisa: [
+    'Export CSV do Meta ou Google do mês (opcional)',
+    'Números que você já sabe: quanto entrou, quanto gastou, quantos clientes',
+    '5 minutos para revisar o texto gerado',
+  ],
 }

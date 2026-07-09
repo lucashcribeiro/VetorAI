@@ -53,6 +53,26 @@ export function SiteFooter() {
                 </Link>
               </div>
             </div>
+            <div>
+              <div
+                style={{
+                  fontFamily: "var(--font-mono), 'JetBrains Mono', monospace",
+                  fontSize: 11,
+                  color: 'rgba(240,238,232,.5)',
+                  marginBottom: 12,
+                }}
+              >
+                legal
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <Link href="/termos" style={linkStyle}>
+                  Termos de uso
+                </Link>
+                <Link href="/privacidade" style={linkStyle}>
+                  Privacidade (LGPD)
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
         <div

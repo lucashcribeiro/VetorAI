@@ -16,4 +16,9 @@ export const manifest: ModuleManifest = {
     'Começa com CSV; API da Meta quando fizer sentido',
     'Língua de dono, não de mídia',
   ],
+  oQueVocePrecisa: [
+    'Export CSV de campanhas (Meta ou Google) com gasto e resultados',
+    'Importar com frequência (semanal no mínimo)',
+    'Olhar os alertas abertos no dashboard',
+  ],
 }

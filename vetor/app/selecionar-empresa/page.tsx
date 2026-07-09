@@ -5,6 +5,7 @@ import { Button } from '@/core/ui/Button'
 import { requireUser } from '@/core/auth/guards'
 import { db } from '@/core/db/client'
 import { escolherEmpresa } from './actions'
+import { CriarEmpresaForm } from './CriarEmpresaForm'
 import { logoutAction } from '@/app/(auth)/actions'
 
 export default async function SelecionarEmpresaPage() {
@@ -16,7 +17,6 @@ export default async function SelecionarEmpresaPage() {
     orderBy: { tenant: { nome: 'asc' } },
   })
 
-  // SUPER_ADMIN vê todos os tenants ativos.
   const tenants =
     user.role === 'SUPER_ADMIN'
       ? await db.tenant.findMany({
@@ -24,6 +24,8 @@ export default async function SelecionarEmpresaPage() {
           orderBy: { nome: 'asc' },
         })
       : memberships.map((m) => m.tenant)
+
+  const podeCriar = user.role !== 'SUPER_ADMIN' || tenants.length === 0
 
   return (
     <main
@@ -48,21 +50,17 @@ export default async function SelecionarEmpresaPage() {
             textAlign: 'center',
           }}
         >
-          Escolha a empresa
+          {tenants.length === 0 ? 'Bem-vindo à plataforma' : 'Escolha a empresa'}
         </h1>
         <p style={{ margin: '0 0 20px', textAlign: 'center', color: 'var(--pedra)', fontSize: 14 }}>
-          Olá, {user.nome.split(' ')[0]}. Em qual empresa você quer entrar?
+          Olá, {user.nome.split(' ')[0]}.
+          {tenants.length === 0
+            ? ' Crie sua empresa para começar — ou aguarde um convite.'
+            : ' Em qual empresa você quer entrar?'}
         </p>
 
-        {tenants.length === 0 ? (
-          <Card tone="osso" padding={24}>
-            <p style={{ margin: 0, color: 'var(--pedra)', fontSize: 14, textAlign: 'center' }}>
-              Você ainda não está em nenhuma empresa. Peça ao admin da VETOR ou ao dono para te
-              convidar.
-            </p>
-          </Card>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {tenants.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
             {tenants.map((t) => (
               <form key={t.id} action={escolherEmpresa.bind(null, t.id)}>
                 <Card
@@ -107,6 +105,8 @@ export default async function SelecionarEmpresaPage() {
             ))}
           </div>
         )}
+
+        {podeCriar && <CriarEmpresaForm />}
 
         <div style={{ marginTop: 24, display: 'flex', justifyContent: 'center', gap: 16 }}>
           <Link href="/" style={{ fontSize: 13, color: 'var(--pedra)' }}>

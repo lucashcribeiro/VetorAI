@@ -24,7 +24,12 @@ const monoFont = {
   fontFamily: "var(--font-mono), 'JetBrains Mono', monospace",
 } as const
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ bemvindo?: string }>
+}) {
+  const { bemvindo } = await searchParams
   const tenant = await requireTenantContext()
   const user = await currentUserDb()
   const ativos = await getActiveModuleIds(tenant.id)
@@ -94,6 +99,46 @@ export default async function DashboardPage() {
           )}
         </p>
       </header>
+
+      {bemvindo === '1' && (
+        <Card tone="osso" padding={24} style={{ marginBottom: 24 }}>
+          <EyebrowLabel>primeiro valor · checklist</EyebrowLabel>
+          <h2
+            style={{
+              ...displayFont,
+              fontSize: 20,
+              margin: '10px 0 12px',
+            }}
+          >
+            Empresa pronta. Em 15 minutos:
+          </h2>
+          <ol style={{ margin: 0, paddingLeft: 18, color: 'var(--carvao)', lineHeight: 1.7 }}>
+            <li>
+              <Link href="/configuracoes/equipe" style={{ color: 'var(--carvao)', fontWeight: 600 }}>
+                Convide a equipe
+              </Link>
+            </li>
+            <li>
+              <Link href="/tools/relatorios" style={{ color: 'var(--carvao)', fontWeight: 600 }}>
+                Gere o primeiro relatório
+              </Link>{' '}
+              (números do mês + CSV opcional)
+            </li>
+            <li>
+              <Link href="/tools/conteudo" style={{ color: 'var(--carvao)', fontWeight: 600 }}>
+                Monte a pauta da semana
+              </Link>{' '}
+              e aprove em lote
+            </li>
+            <li>
+              <Link href="/tools/anuncios" style={{ color: 'var(--carvao)', fontWeight: 600 }}>
+                Importe o CSV de anúncios
+              </Link>{' '}
+              se já roda mídia
+            </li>
+          </ol>
+        </Card>
+      )}
 
       {alertasAnuncios > 0 && (
         <Card tone="white" elevated padding={18} style={{ marginBottom: 24 }}>

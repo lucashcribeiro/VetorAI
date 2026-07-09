@@ -1,6 +1,6 @@
 # VETOR — Plataforma
 
-Plataforma multi-tenant da consultoria VETOR. **Fases 0–6 implementadas**. O documento mestre do projeto é o `README-VETOR.md` na pasta pai.
+Plataforma multi-tenant da consultoria VETOR. **Fases 0–7 implementadas** (beta comercial). O documento mestre do projeto é o `README-VETOR.md` na pasta pai.
 
 ## O que já existe
 
@@ -47,6 +47,12 @@ Plataforma multi-tenant da consultoria VETOR. **Fases 0–6 implementadas**. O d
 - **Job** `rodarAnaliseDiariaTodosTenants` (reanalisa histórico; Meta API = etapa B).
 - Card de alertas abertos no **dashboard**.
 
+### Fase 7 — Beta comercial
+- **Onboarding self-service:** criar empresa em `/selecionar-empresa` → OWNER + módulos essenciais → checklist no dashboard (`?bemvindo=1`).
+- **Faturamento manual:** `/configuracoes/faturamento` (Pix via env, sem Stripe).
+- **LGPD:** `/termos` e `/privacidade` no site.
+- **Venda:** cada `/ferramentas/[slug]` com “o que faz” + “o que precisa de você”.
+
 ## Subindo o ambiente
 
 1. **Neon (Postgres serverless):** crie o projeto em [console.neon.tech](https://console.neon.tech), copie a connection string pooled (`?sslmode=require`) para `DATABASE_URL` em `.env` e `.env.local`. Depois:
@@ -86,6 +92,7 @@ npx vercel --prod   # publica em vercel.app
 | 4 | Link do site para prospect sem vergonha | ✓ | Domínio + `NEXT_PUBLIC_SITE_URL` |
 | 5 | Pauta semanal + aprovação em lote | ✓ | + Anthropic |
 | 6 | Alerta de anúncio antes do prejuízo | ✓ | CSV (Meta API depois) |
+| 7 | Onboarding + termos + cobrança manual | ✓ | Pix opcional nas envs |
 
 ## Decisões locais
 
@@ -98,5 +105,5 @@ npx vercel --prod   # publica em vercel.app
 
 ## Próximas fases
 
-- **Fase 7:** beta comercial (onboarding, Pix manual, termos LGPD).
-- Meta Marketing API no monitor; Instagram no Conteúdo; Zelo v2.
+- Validação real com pilotos pagantes.
+- Meta Marketing API; Instagram no Conteúdo; Zelo v2; Stripe após o 5º pagante.

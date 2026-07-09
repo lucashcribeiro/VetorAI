@@ -136,6 +136,10 @@ export function AppShell({
             <IconAjustes size={17} style={{ flex: 'none' }} />
             Ajustes
           </NavLink>
+          <NavLink href="/configuracoes/faturamento">
+            <IconAjustes size={17} style={{ flex: 'none' }} />
+            Faturamento
+          </NavLink>
         </nav>
 
         <div

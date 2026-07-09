@@ -16,4 +16,9 @@ export const manifest: ModuleManifest = {
     'Fila clara: quem espera, o que foi dito, o que fazer',
     'Mede tempo de primeira resposta — métrica que vira valor',
   ],
+  oQueVocePrecisa: [
+    'Número de WhatsApp Business (Cloud API) ou usar o modo simular no começo',
+    'Alguém da equipe para aprovar as sugestões nos primeiros dias',
+    'Dossiê básico: horário, endereço, tom de voz',
+  ],
 }

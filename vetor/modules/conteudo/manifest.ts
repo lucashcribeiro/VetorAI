@@ -16,4 +16,9 @@ export const manifest: ModuleManifest = {
     'Tom e conformidade pensados para o seu segmento',
     'Menos “o que postar hoje?” e mais execução',
   ],
+  oQueVocePrecisa: [
+    'Segmento e tom da marca (dossiê ou conversa de diagnóstico)',
+    'Aprovação em lote uma vez por semana (~10 min)',
+    'Exportar/publicar o que foi aprovado (v1 manual)',
+  ],
 }
