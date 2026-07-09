@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="132" height="32" viewBox="0 0 132 32" role="img" aria-label="vetor">
+  <!-- Símbolo: seta geométrica (direção) rotacionada -45° + ponto vermelho (intensidade) -->
+  <g transform="rotate(-45 16 16)">
+    <polygon points="9,5 25,16 9,27 9,21.4 17,16 9,10.6" fill="#171717"/>
+  </g>
+  <circle cx="6.5" cy="25.5" r="3" fill="#E04A1F"/>
+  <!-- Wordmark: Space Grotesk 700, minúsculas, tracking 0.02em (contornos fixos p/ uso fora do app) -->
+  <text x="41" y="26.4" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="27.2" letter-spacing="0.02em" fill="#171717">vetor</text>
+</svg>
