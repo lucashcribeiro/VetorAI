@@ -5,7 +5,16 @@ const TENANT = 'tnt_123'
 
 describe('isTenantScoped', () => {
   it('marca modelos operacionais como tenant-scoped', () => {
-    for (const m of ['TenantModule', 'Membership', 'ActivityLog', 'Event', 'AiUsage', 'Dossie', 'AgentRun']) {
+    for (const m of [
+      'TenantModule',
+      'Membership',
+      'ActivityLog',
+      'Event',
+      'AiUsage',
+      'Dossie',
+      'AgentRun',
+      'RelatorioGerado',
+    ]) {
       expect(isTenantScoped(m)).toBe(true)
     }
   })

@@ -1,4 +1,4 @@
-// VETOR — schema core multi-tenant (Fase 1).
+// VETOR — schema multi-tenant (core + módulos).
 // Regra: toda tabela operacional tem tenant_id; o filtro é injetado
 // automaticamente pela extensão em core/db/client.ts (ADR-003).
 
@@ -31,6 +31,7 @@ model Tenant {
   usosDeIa    AiUsage[]
   dossies     Dossie[]
   agentRuns   AgentRun[]
+  relatorios  RelatorioGerado[]
 
   @@map("tenants")
 }
@@ -151,4 +152,28 @@ model AgentRun {
 
   @@index([tenantId, iniciadoEm])
   @@map("agent_runs")
+}
+
+// ── modules/relatorios ────────────────────────────────────────────
+// Relatório mensal em linguagem de dono (Fase 2).
+// Status: processando | pronto | erro
+model RelatorioGerado {
+  id           String   @id @default(cuid())
+  tenantId     String   @map("tenant_id")
+  mes          String // YYYY-MM
+  status       String   @default("processando")
+  dadosEntrada Json     @default("{}") @map("dados_entrada")
+  conteudoHtml String?  @map("conteudo_html") @db.Text
+  arquivoUrl   String?  @map("arquivo_url")
+  resumo       String?
+  erro         String?
+  criadoPorId  String?  @map("criado_por_id")
+  criadoEm     DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, mes])
+  @@index([tenantId, criadoEm])
+  @@map("relatorios_gerados")
 }

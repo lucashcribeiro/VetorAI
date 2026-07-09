@@ -9,6 +9,7 @@ const TENANT_SCOPED_MODELS = new Set([
   'AiUsage',
   'Dossie',
   'AgentRun',
+  'RelatorioGerado',
 ])
 
 // Operações cujo `where` aceita filtro arbitrário.

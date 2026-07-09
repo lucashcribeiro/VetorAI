@@ -7,6 +7,6 @@ export const manifest: ModuleManifest = {
   nome: 'Relatórios',
   descricao: 'Um resumo por mês, em uma página, sem jargão — quanto entrou, quanto custou, o que fazer.',
   icone: IconRelatorios,
-  status: 'em_breve',
+  status: 'disponivel',
   planoMinimo: 'essencial',
 }
