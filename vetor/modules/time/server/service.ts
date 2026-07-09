@@ -167,8 +167,8 @@ async function gerarEntregaAgente(input: {
         erro: msg.slice(0, 500),
       },
     })
-    const amigavel = /api.?key|authentication|401|ANTHROPIC/i.test(msg)
-      ? 'IA não configurada (chave Anthropic).'
+    const amigavel = /api.?key|authentication|401|ANTHROPIC|OPENAI|incorrect api/i.test(msg)
+      ? 'IA não configurada. Defina OPENAI_API_KEY ou ANTHROPIC_API_KEY em .env.local.'
       : msg.slice(0, 400)
     return { ok: false, erro: amigavel }
   }

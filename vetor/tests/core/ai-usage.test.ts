@@ -16,14 +16,16 @@ describe('custoBrl', () => {
     expect(custoBrl('claude-opus-4-8', 0, 0, 5.5)).toBe(0)
   })
 
-  it('modelo desconhecido usa preço de opus (não subestima margem)', () => {
+  it('modelo desconhecido usa preço do padrão Anthropic (não subestima)', () => {
     expect(custoBrl('modelo-inexistente', 1_000_000, 0, 5)).toBeCloseTo(
-      custoBrl('claude-opus-4-8', 1_000_000, 0, 5),
+      custoBrl(MODELO_PADRAO, 1_000_000, 0, 5),
       6,
     )
   })
 
-  it('modelo padrão é opus 4.8', () => {
-    expect(MODELO_PADRAO).toBe('claude-opus-4-8')
+  it('gpt-4o tem preço próprio', () => {
+    // 1M in * 2.5 + 0 out a câmbio 5 = R$ 12.5
+    expect(custoBrl('gpt-4o', 1_000_000, 0, 5)).toBeCloseTo(12.5, 6)
   })
 })
+
