@@ -15,7 +15,7 @@ describe('slugifyEmpresa', () => {
 describe('MODULOS_ONBOARDING', () => {
   it('ativa o essencial para primeiro valor', () => {
     expect(MODULOS_ONBOARDING).toEqual(
-      expect.arrayContaining(['relatorios', 'conteudo', 'midia']),
+      expect.arrayContaining(['relatorios', 'conteudo', 'midia', 'time']),
     )
   })
 })

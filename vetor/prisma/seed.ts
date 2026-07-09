@@ -16,13 +16,13 @@ async function main() {
       nome: 'Dra. Mirilaini',
       slug: 'dra-mirilaini',
       segmento: 'odontologia · sp',
-      modulos: ['conteudo', 'relatorios', 'zelo', 'midia'],
+      modulos: ['conteudo', 'relatorios', 'zelo', 'midia', 'time'],
     },
     {
       nome: 'Milu Seguros',
       slug: 'milu-seguros',
       segmento: 'seguros · sp',
-      modulos: ['relatorios', 'zelo', 'midia'],
+      modulos: ['relatorios', 'zelo', 'midia', 'time'],
     },
   ]
 

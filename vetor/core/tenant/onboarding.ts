@@ -2,7 +2,7 @@ import 'server-only'
 import { db } from '@/core/db/client'
 
 // Módulos ligados no self-service para o dono ver valor em < 15 min.
-export const MODULOS_ONBOARDING = ['relatorios', 'conteudo', 'midia'] as const
+export const MODULOS_ONBOARDING = ['relatorios', 'conteudo', 'midia', 'time'] as const
 
 export function slugifyEmpresa(texto: string): string {
   return texto

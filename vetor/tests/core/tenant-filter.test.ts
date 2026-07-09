@@ -19,6 +19,7 @@ describe('isTenantScoped', () => {
       'ConteudoPost',
       'MidiaMetrica',
       'MidiaAlerta',
+      'TimeEntrega',
     ]) {
       expect(isTenantScoped(m)).toBe(true)
     }

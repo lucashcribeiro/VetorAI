@@ -15,6 +15,7 @@ const TENANT_SCOPED_MODELS = new Set([
   'ConteudoPost',
   'MidiaMetrica',
   'MidiaAlerta',
+  'TimeEntrega',
 ])
 
 // Operações cujo `where` aceita filtro arbitrário.

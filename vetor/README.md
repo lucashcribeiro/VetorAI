@@ -58,11 +58,17 @@ Plataforma multi-tenant da consultoria VETOR. **Fases 0–7 implementadas** (bet
 - **Marca** `/configuracoes/marca` — logo URL + cor no chip (white-label leve).
 - **Admin leads** `/admin/leads` + contador de leads no mês na saúde.
 
+### Time VETOR (`modules/time` + `time-vetor/`)
+- Skills portadas: Órbita, Atlas, Lumen, Vetor Mídia, Prisma.
+- **UI** `/tools/time` — acionar funcionário, listar entregas, aprovar checkpoint.
+- Tabela `time_entregas` (migration `0008_time_vetor`); usa `agent_runs` + `core/ai`.
+- Dependências: copy exige mapa aprovado; mídia exige estratégia + copy (forçar opcional).
+
 ## Subindo o ambiente
 
 1. **Neon (Postgres serverless):** crie o projeto em [console.neon.tech](https://console.neon.tech), copie a connection string pooled (`?sslmode=require`) para `DATABASE_URL` em `.env` e `.env.local`. Depois:
    ```bash
-   npm run db:migrate   # 0001–0007
+   npm run db:migrate   # 0001–0008
    npm run db:seed      # pilotos + admin@vetor.local
    ```
 2. **Auth.js:** `AUTH_SECRET` (`openssl rand -base64 32`). Seed cria `admin@vetor.local` / `vetor-admin-2026` (ou `SEED_ADMIN_*`). Sem Clerk — login no seu banco.
