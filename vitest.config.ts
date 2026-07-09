@@ -1,12 +1,12 @@
 import { defineConfig } from 'vitest/config'
+import react from '@vitejs/plugin-react'
 import path from 'path'
 
 export default defineConfig({
+  plugins: [react()],
   resolve: {
     alias: { '@': path.resolve(__dirname) },
   },
-  // o tsconfig do Next usa jsx: "preserve"; aqui o esbuild precisa transformar
-  esbuild: { jsx: 'automatic' },
   test: {
     include: ['tests/**/*.test.ts'],
     environment: 'node',
