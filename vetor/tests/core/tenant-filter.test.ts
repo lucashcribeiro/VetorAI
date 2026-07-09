@@ -16,6 +16,7 @@ describe('isTenantScoped', () => {
       'RelatorioGerado',
       'ZeloConversa',
       'ZeloMensagem',
+      'ConteudoPost',
     ]) {
       expect(isTenantScoped(m)).toBe(true)
     }

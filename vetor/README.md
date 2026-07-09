@@ -1,6 +1,6 @@
 # VETOR — Plataforma
 
-Plataforma multi-tenant da consultoria VETOR. **Fases 0–4 implementadas**. O documento mestre do projeto é o `README-VETOR.md` na pasta pai.
+Plataforma multi-tenant da consultoria VETOR. **Fases 0–5 implementadas**. O documento mestre do projeto é o `README-VETOR.md` na pasta pai.
 
 ## O que já existe
 
@@ -33,11 +33,17 @@ Plataforma multi-tenant da consultoria VETOR. **Fases 0–4 implementadas**. O d
 - **Contato** `/contato` · **Leads** na tabela `leads` (migration `0004_leads`) + log estruturado.
 - **SEO:** `metadataBase`, `robots.ts`, `sitemap.xml`, `NEXT_PUBLIC_SITE_URL`.
 
+### Fase 5 — Módulo Conteúdo
+- **UI** `/tools/conteudo`: gerar calendário semanal, fila com aprovação em lote, rejeitar, exportar texto.
+- **Tabela** `conteudo_posts` (migration `0006_conteudo`).
+- **Job** `gerar-calendario`: dossiê + segmento → Claude (prompt com **CFO dental** / **SUSEP seguros**) → posts `pendente`.
+- **Eventos** `post.aprovado`, `post.publicado` (exportação v1 = lembrete/texto, sem Instagram API ainda).
+
 ## Subindo o ambiente
 
 1. **Neon (Postgres serverless):** crie o projeto em [console.neon.tech](https://console.neon.tech), copie a connection string pooled (`?sslmode=require`) para `DATABASE_URL` em `.env` e `.env.local`. Depois:
    ```bash
-   npm run db:migrate   # 0001–0005 (core, relatórios, zelo, leads, auth)
+   npm run db:migrate   # 0001–0006
    npm run db:seed      # pilotos + admin@vetor.local
    ```
 2. **Auth.js:** `AUTH_SECRET` (`openssl rand -base64 32`). Seed cria `admin@vetor.local` / `vetor-admin-2026` (ou `SEED_ADMIN_*`). Sem Clerk — login no seu banco.
@@ -70,6 +76,7 @@ npx vercel --prod   # publica em vercel.app
 | 2 | Gerar relatório, baixar HTML, dono entende | ✓ | + Anthropic |
 | 3 | Fila assistida: sugerir → aprovar; 1ª resposta medida | ✓ | + WhatsApp (ou simular no portal) |
 | 4 | Link do site para prospect sem vergonha | ✓ | Domínio + `NEXT_PUBLIC_SITE_URL` |
+| 5 | Pauta semanal + aprovação em lote | ✓ | + Anthropic |
 
 ## Decisões locais
 
@@ -82,5 +89,4 @@ npx vercel --prod   # publica em vercel.app
 
 ## Próximas fases
 
-- **Fase 5:** módulo Conteúdo (calendário + aprovação em lote).
-- **Fase 6:** Monitor de Anúncios; Zelo v2 semiautônomo.
+- **Fase 6:** Monitor de Anúncios; Instagram Graph API no Conteúdo se o piloto pedir; Zelo v2.
