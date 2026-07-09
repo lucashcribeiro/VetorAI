@@ -114,6 +114,12 @@ export default async function DashboardPage({
           </h2>
           <ol style={{ margin: 0, paddingLeft: 18, color: 'var(--carvao)', lineHeight: 1.7 }}>
             <li>
+              <Link href="/configuracoes/dossie" style={{ color: 'var(--carvao)', fontWeight: 600 }}>
+                Preencha o dossiê
+              </Link>{' '}
+              (contexto da IA)
+            </li>
+            <li>
               <Link href="/configuracoes/equipe" style={{ color: 'var(--carvao)', fontWeight: 600 }}>
                 Convide a equipe
               </Link>

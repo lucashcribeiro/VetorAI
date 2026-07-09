@@ -31,7 +31,7 @@ export default async function AdminHome() {
   inicioDoMes.setDate(1)
   inicioDoMes.setHours(0, 0, 0, 0)
 
-  const [tenants, modulosAtivos, eventosPendentes, custoMes] = await Promise.all([
+  const [tenants, modulosAtivos, eventosPendentes, custoMes, leadsMes] = await Promise.all([
     db.tenant.count({ where: { status: 'ativo' } }),
     db.tenantModule.count({ where: { ativo: true } }),
     db.event.count({ where: { processado: false } }),
@@ -39,6 +39,7 @@ export default async function AdminHome() {
       _sum: { custoBrl: true },
       where: { criadoEm: { gte: inicioDoMes } },
     }),
+    db.lead.count({ where: { criadoEm: { gte: inicioDoMes } } }),
   ])
 
   const custo = Number(custoMes._sum.custoBrl ?? 0)
@@ -62,6 +63,7 @@ export default async function AdminHome() {
           rotulo="custo de ia no mês"
           valor={custo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
         />
+        <CardMetrica rotulo="leads no mês" valor={String(leadsMes)} />
       </div>
     </div>
   )

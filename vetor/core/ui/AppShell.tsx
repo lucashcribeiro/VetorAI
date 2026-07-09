@@ -16,17 +16,23 @@ export interface NavModule {
 export function AppShell({
   tenantNome,
   tenantSegmento,
+  tenantLogoUrl,
+  tenantCorPrimaria,
   modulos,
   topbar,
   children,
 }: {
   tenantNome: string
   tenantSegmento: string | null
+  /** White-label leve (ADR logo/cor no tenant). */
+  tenantLogoUrl?: string | null
+  tenantCorPrimaria?: string | null
   modulos: NavModule[]
   topbar?: ReactNode
   children: ReactNode
 }) {
   const inicial = tenantNome.trim().charAt(0).toUpperCase() || 'V'
+  const accent = tenantCorPrimaria?.trim() || null
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
@@ -43,6 +49,8 @@ export function AppShell({
           top: 0,
           height: '100vh',
           boxSizing: 'border-box',
+          // Acento do tenant no chip (≤10% da UI)
+          ['--tenant-accent' as string]: accent || 'var(--vermelho-vetor)',
         }}
       >
         <div style={{ padding: '0 24px 26px' }}>
@@ -69,16 +77,20 @@ export function AppShell({
               height: 30,
               flex: 'none',
               borderRadius: '50%',
-              background: 'var(--osso)',
-              color: 'var(--carvao)',
+              background: accent || 'var(--osso)',
+              color: accent ? '#fff' : 'var(--carvao)',
               display: 'grid',
               placeItems: 'center',
               fontFamily: "var(--font-display), 'Space Grotesk', sans-serif",
               fontWeight: 700,
               fontSize: 12,
+              overflow: 'hidden',
+              backgroundImage: tenantLogoUrl ? `url(${tenantLogoUrl})` : undefined,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
             }}
           >
-            {inicial}
+            {!tenantLogoUrl ? inicial : null}
           </div>
           <div style={{ minWidth: 0 }}>
             <div
@@ -135,6 +147,14 @@ export function AppShell({
           <NavLink href="/configuracoes/modulos">
             <IconAjustes size={17} style={{ flex: 'none' }} />
             Ajustes
+          </NavLink>
+          <NavLink href="/configuracoes/dossie">
+            <IconAjustes size={17} style={{ flex: 'none' }} />
+            Dossiê
+          </NavLink>
+          <NavLink href="/configuracoes/marca">
+            <IconAjustes size={17} style={{ flex: 'none' }} />
+            Marca
           </NavLink>
           <NavLink href="/configuracoes/faturamento">
             <IconAjustes size={17} style={{ flex: 'none' }} />

@@ -19,7 +19,13 @@ export default async function PlatformLayout({ children }: { children: ReactNode
     }))
 
   return (
-    <AppShell tenantNome={tenant.nome} tenantSegmento={tenant.segmento} modulos={modulos}>
+    <AppShell
+      tenantNome={tenant.nome}
+      tenantSegmento={tenant.segmento}
+      tenantLogoUrl={tenant.logoUrl}
+      tenantCorPrimaria={tenant.corPrimaria}
+      modulos={modulos}
+    >
       {children}
     </AppShell>
   )

@@ -39,6 +39,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           <Link href="/admin/tenants" style={{ color: 'var(--osso)', opacity: 0.85 }}>
             Tenants
           </Link>
+          <Link href="/admin/leads" style={{ color: 'var(--osso)', opacity: 0.85 }}>
+            Leads
+          </Link>
           <Link href="/dashboard" style={{ color: 'var(--osso)', opacity: 0.55 }}>
             ← plataforma
           </Link>

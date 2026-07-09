@@ -53,6 +53,11 @@ Plataforma multi-tenant da consultoria VETOR. **Fases 0–7 implementadas** (bet
 - **LGPD:** `/termos` e `/privacidade` no site.
 - **Venda:** cada `/ferramentas/[slug]` com “o que faz” + “o que precisa de você”.
 
+### Pós-beta (operacional)
+- **Dossiê** `/configuracoes/dossie` — contexto da IA (relatórios, conteúdo, Zelo).
+- **Marca** `/configuracoes/marca` — logo URL + cor no chip (white-label leve).
+- **Admin leads** `/admin/leads` + contador de leads no mês na saúde.
+
 ## Subindo o ambiente
 
 1. **Neon (Postgres serverless):** crie o projeto em [console.neon.tech](https://console.neon.tech), copie a connection string pooled (`?sslmode=require`) para `DATABASE_URL` em `.env` e `.env.local`. Depois:
