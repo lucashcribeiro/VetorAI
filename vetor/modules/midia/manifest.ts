@@ -7,7 +7,7 @@ export const manifest: ModuleManifest = {
   nome: 'Anúncios',
   descricao: 'Seus anúncios no Google e Instagram, medidos por uma coisa só: quanto custa trazer um cliente novo.',
   icone: IconAnuncios,
-  status: 'em_breve',
+  status: 'beta',
   planoMinimo: 'essencial',
   headlineVenda: 'Saiba se o anúncio está barato ou caro em cliente novo — todo dia.',
   beneficios: [

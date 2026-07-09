@@ -13,6 +13,8 @@ const TENANT_SCOPED_MODELS = new Set([
   'ZeloConversa',
   'ZeloMensagem',
   'ConteudoPost',
+  'MidiaMetrica',
+  'MidiaAlerta',
 ])
 
 // Operações cujo `where` aceita filtro arbitrário.

@@ -1,6 +1,6 @@
 # VETOR — Plataforma
 
-Plataforma multi-tenant da consultoria VETOR. **Fases 0–5 implementadas**. O documento mestre do projeto é o `README-VETOR.md` na pasta pai.
+Plataforma multi-tenant da consultoria VETOR. **Fases 0–6 implementadas**. O documento mestre do projeto é o `README-VETOR.md` na pasta pai.
 
 ## O que já existe
 
@@ -39,11 +39,19 @@ Plataforma multi-tenant da consultoria VETOR. **Fases 0–5 implementadas**. O d
 - **Job** `gerar-calendario`: dossiê + segmento → Claude (prompt com **CFO dental** / **SUSEP seguros**) → posts `pendente`.
 - **Eventos** `post.aprovado`, `post.publicado` (exportação v1 = lembrete/texto, sem Instagram API ainda).
 
+### Fase 6 — Monitor de Anúncios
+- **UI** `/tools/anuncios`: import CSV → histórico → alertas em língua de dono.
+- **Tabelas** `midia_metricas` / `midia_alertas` (migration `0007_midia`).
+- **Regras:** CPL +30% vs janela anterior; gasto alto sem contatos; gasto sobe sem mais leads.
+- **Evento** `campanha.alerta_criado` (Relatórios pode consumir depois).
+- **Job** `rodarAnaliseDiariaTodosTenants` (reanalisa histórico; Meta API = etapa B).
+- Card de alertas abertos no **dashboard**.
+
 ## Subindo o ambiente
 
 1. **Neon (Postgres serverless):** crie o projeto em [console.neon.tech](https://console.neon.tech), copie a connection string pooled (`?sslmode=require`) para `DATABASE_URL` em `.env` e `.env.local`. Depois:
    ```bash
-   npm run db:migrate   # 0001–0006
+   npm run db:migrate   # 0001–0007
    npm run db:seed      # pilotos + admin@vetor.local
    ```
 2. **Auth.js:** `AUTH_SECRET` (`openssl rand -base64 32`). Seed cria `admin@vetor.local` / `vetor-admin-2026` (ou `SEED_ADMIN_*`). Sem Clerk — login no seu banco.
@@ -77,6 +85,7 @@ npx vercel --prod   # publica em vercel.app
 | 3 | Fila assistida: sugerir → aprovar; 1ª resposta medida | ✓ | + WhatsApp (ou simular no portal) |
 | 4 | Link do site para prospect sem vergonha | ✓ | Domínio + `NEXT_PUBLIC_SITE_URL` |
 | 5 | Pauta semanal + aprovação em lote | ✓ | + Anthropic |
+| 6 | Alerta de anúncio antes do prejuízo | ✓ | CSV (Meta API depois) |
 
 ## Decisões locais
 
@@ -89,4 +98,5 @@ npx vercel --prod   # publica em vercel.app
 
 ## Próximas fases
 
-- **Fase 6:** Monitor de Anúncios; Instagram Graph API no Conteúdo se o piloto pedir; Zelo v2.
+- **Fase 7:** beta comercial (onboarding, Pix manual, termos LGPD).
+- Meta Marketing API no monitor; Instagram no Conteúdo; Zelo v2.

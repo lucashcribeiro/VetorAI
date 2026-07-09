@@ -29,13 +29,16 @@ export default async function DashboardPage() {
   const user = await currentUserDb()
   const ativos = await getActiveModuleIds(tenant.id)
 
-  const [pendentes, atividades] = await Promise.all([
+  const [pendentes, atividades, alertasAnuncios] = await Promise.all([
     db.event.count({ where: { tenantId: tenant.id, processado: false } }),
     db.activityLog.findMany({
       where: { tenantId: tenant.id },
       orderBy: { criadoEm: 'desc' },
       take: 8,
     }),
+    ativos.includes('midia')
+      ? db.midiaAlerta.count({ where: { tenantId: tenant.id, status: 'aberto' } })
+      : Promise.resolve(0),
   ])
 
   const modulosAtivos = ativos
@@ -91,6 +94,38 @@ export default async function DashboardPage() {
           )}
         </p>
       </header>
+
+      {alertasAnuncios > 0 && (
+        <Card tone="white" elevated padding={18} style={{ marginBottom: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+            <div>
+              <Badge tone="accent">anúncios</Badge>
+              <p style={{ margin: '8px 0 0', fontWeight: 600 }}>
+                {alertasAnuncios}{' '}
+                {alertasAnuncios === 1 ? 'alerta aberto' : 'alertas abertos'} nos seus anúncios
+              </p>
+              <p style={{ margin: '4px 0 0', color: 'var(--pedra)', fontSize: 14 }}>
+                Vale olhar antes de gastar mais hoje.
+              </p>
+            </div>
+            <Link
+              href="/tools/anuncios"
+              style={{
+                fontFamily: "var(--font-body), 'Work Sans', sans-serif",
+                fontWeight: 600,
+                fontSize: 14,
+                color: '#fff',
+                background: 'var(--accent)',
+                padding: '10px 16px',
+                borderRadius: 8,
+                textDecoration: 'none',
+              }}
+            >
+              Ver alertas
+            </Link>
+          </div>
+        </Card>
+      )}
 
       {/* Ferramentas ativas */}
       <section style={{ marginBottom: 32 }}>
