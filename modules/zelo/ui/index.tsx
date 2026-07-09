@@ -1,8 +1,8 @@
 import { ModuloEmConstrucao } from '@/core/ui/ModuloEmConstrucao'
-import type { ModuleUiProps } from '../../types'
+
 import { manifest } from '../manifest'
 
-export default function ZeloUi(_props: ModuleUiProps) {
+export default function ZeloUi() {
   return (
     <ModuloEmConstrucao
       nome={manifest.nome}
