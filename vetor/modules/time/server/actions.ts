@@ -1,15 +1,14 @@
 'use server'
 
+import { after } from 'next/server'
 import { revalidatePath } from 'next/cache'
 import { requireTenantContext } from '@/core/tenant/context'
 import { currentUserDb } from '@/core/auth/guards'
 import { isModuleActive } from '@/core/tenant/modules'
-import type { AgenteId } from '../agents'
-import { getAgente } from '../agents'
-import { aprovarEntrega, executarAgente } from './service'
+import { executarPipelineRodada, iniciarRodada } from './service'
 
 export type ActionResult =
-  | { ok: true; entregaId?: string }
+  | { ok: true; rodadaId?: string }
   | { ok: false; erro: string }
 
 async function guard() {
@@ -20,47 +19,36 @@ async function guard() {
   return tenant
 }
 
-export async function rodarAgenteAction(formData: FormData): Promise<ActionResult> {
+/** Inicia pipeline completa: Órbita → Atlas → Lumen → Mídia → Prisma(QA). */
+export async function iniciarPipelineAction(formData: FormData): Promise<ActionResult> {
   try {
     const tenant = await guard()
     const user = await currentUserDb()
-    const agenteId = String(formData.get('agenteId') ?? '') as AgenteId
-    if (!getAgente(agenteId)) return { ok: false, erro: 'Agente inválido.' }
-
     const brief = String(formData.get('brief') ?? '')
-    const tipo = String(formData.get('tipo') ?? '') || undefined
-    const forcar = formData.get('forcar') === '1'
 
-    const r = await executarAgente({
+    const r = await iniciarRodada({
       tenantId: tenant.id,
-      agenteId,
-      tipo,
       brief,
       userId: user?.id,
-      forcarSemDependencias: forcar,
+    })
+    if (!r.ok) return r
+
+    const rodadaId = r.rodadaId
+    const tenantId = tenant.id
+
+    // Processa em background para não estourar timeout da request.
+    after(async () => {
+      try {
+        await executarPipelineRodada({ tenantId, rodadaId })
+      } catch (err) {
+        console.error('[time] pipeline falhou', err)
+      }
     })
 
     revalidatePath('/tools/time')
-    if (r.ok) revalidatePath(`/tools/time/${r.entregaId}`)
-    return r
+    revalidatePath(`/tools/time/rodada/${rodadaId}`)
+    return { ok: true, rodadaId }
   } catch (e) {
-    return { ok: false, erro: e instanceof Error ? e.message : 'Erro ao rodar agente.' }
-  }
-}
-
-export async function aprovarEntregaAction(entregaId: string): Promise<ActionResult> {
-  try {
-    const tenant = await guard()
-    const user = await currentUserDb()
-    const r = await aprovarEntrega({
-      tenantId: tenant.id,
-      entregaId,
-      userId: user?.id,
-    })
-    revalidatePath('/tools/time')
-    revalidatePath(`/tools/time/${entregaId}`)
-    return r.ok ? { ok: true, entregaId } : r
-  } catch (e) {
-    return { ok: false, erro: e instanceof Error ? e.message : 'Erro ao aprovar.' }
+    return { ok: false, erro: e instanceof Error ? e.message : 'Erro ao iniciar o time.' }
   }
 }

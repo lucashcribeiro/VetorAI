@@ -1,6 +1,36 @@
 import 'server-only'
 import { tenantDb, type TenantDb } from '@/core/db/client'
-import type { TimeEntrega } from '@/core/db/generated/client'
+import type { TimeEntrega, TimeRodada } from '@/core/db/generated/client'
+
+export async function listarRodadas(
+  tenantId: string,
+  limit = 20,
+  dbc: TenantDb = tenantDb(tenantId),
+): Promise<TimeRodada[]> {
+  return dbc.timeRodada.findMany({
+    orderBy: { criadoEm: 'desc' },
+    take: limit,
+  })
+}
+
+export async function buscarRodada(
+  tenantId: string,
+  id: string,
+  dbc: TenantDb = tenantDb(tenantId),
+): Promise<TimeRodada | null> {
+  return dbc.timeRodada.findFirst({ where: { id } })
+}
+
+export async function listarEntregasRodada(
+  tenantId: string,
+  rodadaId: string,
+  dbc: TenantDb = tenantDb(tenantId),
+): Promise<TimeEntrega[]> {
+  return dbc.timeEntrega.findMany({
+    where: { rodadaId },
+    orderBy: { criadoEm: 'asc' },
+  })
+}
 
 export async function listarEntregas(
   tenantId: string,
@@ -23,20 +53,4 @@ export async function buscarEntrega(
   dbc: TenantDb = tenantDb(tenantId),
 ): Promise<TimeEntrega | null> {
   return dbc.timeEntrega.findFirst({ where: { id } })
-}
-
-export async function ultimasAprovadasPorAgente(
-  tenantId: string,
-  agentes: string[],
-  dbc: TenantDb = tenantDb(tenantId),
-): Promise<TimeEntrega[]> {
-  const out: TimeEntrega[] = []
-  for (const agente of agentes) {
-    const row = await dbc.timeEntrega.findFirst({
-      where: { agente, status: 'aprovado' },
-      orderBy: { criadoEm: 'desc' },
-    })
-    if (row) out.push(row)
-  }
-  return out
 }

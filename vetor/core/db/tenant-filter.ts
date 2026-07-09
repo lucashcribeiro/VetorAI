@@ -16,6 +16,7 @@ const TENANT_SCOPED_MODELS = new Set([
   'MidiaMetrica',
   'MidiaAlerta',
   'TimeEntrega',
+  'TimeRodada',
 ])
 
 // Operações cujo `where` aceita filtro arbitrário.

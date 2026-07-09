@@ -6,20 +6,20 @@ export const manifest: ModuleManifest = {
   slug: 'time',
   nome: 'Time VETOR',
   descricao:
-    'Os 5 funcionários de IA: Órbita, Atlas, Lumen, Vetor Mídia e Prisma — brief, checkpoint e entregáveis aprovados.',
+    'Cole o brief e o time roda sozinho: Órbita → Atlas → Lumen → Mídia → Prisma (QA). Se falhar, volta e refaz.',
   icone: IconEquipe,
   status: 'beta',
   planoMinimo: 'completo',
-  headlineVenda: 'Seu time de operações de IA, com checkpoint humano em cada etapa.',
+  headlineVenda: 'Pipeline de operações de IA com QA automático e retrabalho.',
   beneficios: [
-    'Estratégia, copy, mídia e relatório no mesmo lugar',
-    'Nada vai ao cliente em rascunho — você aprova',
-    'Compliance CFO/SUSEP embutido nas skills',
-    'Dossiê da plataforma alimenta cada funcionário',
+    'Você não escolhe funcionário — a ordem é automática',
+    'Prisma revisa qualidade e devolve para quem errou',
+    'Compliance CFO/SUSEP embutido',
+    'Dossiê da plataforma alimenta o time',
   ],
   oQueVocePrecisa: [
     'Brief honesto do cliente (verba, região, diferenciais)',
     'Dossiê preenchido em Configurações',
-    'Sua revisão em cada checkpoint',
+    'Chave Anthropic configurada',
   ],
 }

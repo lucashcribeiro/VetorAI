@@ -37,6 +37,7 @@ model Tenant {
   midiaMetricas MidiaMetrica[]
   midiaAlertas  MidiaAlerta[]
   timeEntregas  TimeEntrega[]
+  timeRodadas   TimeRodada[]
 
   @@map("tenants")
 }
@@ -260,13 +261,37 @@ model MidiaAlerta {
 }
 
 // ── modules/time (Time VETOR) ─────────────────────────────────────
-// Entregáveis dos funcionários de IA (Órbita, Atlas, Lumen, Mídia, Prisma).
-// status: rascunho | aprovado
+// Pipeline automática: Órbita → Atlas → Lumen → Mídia → Prisma (QA).
+// Rodada = uma estruturação completa a partir de um brief.
+model TimeRodada {
+  id           String   @id @default(cuid())
+  tenantId     String   @map("tenant_id")
+  brief        String   @db.Text
+  status       String   @default("rodando") // rodando | qa | retrabalho | concluido | erro
+  etapaAtual   String   @default("orquestrador") @map("etapa_atual")
+  log          Json     @default("[]") // trilha de etapas
+  tentativasQa Int      @default(0) @map("tentativas_qa")
+  erro         String?
+  criadoPorId  String?  @map("criado_por_id")
+  criadoEm     DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+
+  tenant   Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  entregas TimeEntrega[]
+
+  @@index([tenantId, criadoEm])
+  @@index([tenantId, status])
+  @@map("time_rodadas")
+}
+
+// Entregáveis dos funcionários (por rodada).
+// status: rascunho | aprovado | rejeitado_qa
 model TimeEntrega {
   id          String   @id @default(cuid())
   tenantId    String   @map("tenant_id")
+  rodadaId    String?  @map("rodada_id")
   agente      String // orquestrador | estrategista | copywriter | gestor_midia | analista_bi
-  tipo        String // mapa-de-nicho | plano-gtm | copy-ads | estrutura-campanha | relatorio-mensal | sumario | plano-trabalho
+  tipo        String // mapa-de-nicho | plano-gtm | copy-ads | estrutura-campanha | relatorio-mensal | sumario | plano-trabalho | qa
   titulo      String?
   conteudo    String   @db.Text
   brief       String?  @db.Text
@@ -277,10 +302,12 @@ model TimeEntrega {
   criadoEm    DateTime @default(now()) @map("criado_em")
   atualizadoEm DateTime @updatedAt @map("atualizado_em")
 
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  rodada TimeRodada? @relation(fields: [rodadaId], references: [id], onDelete: Cascade)
 
   @@index([tenantId, agente, criadoEm])
   @@index([tenantId, status])
+  @@index([rodadaId])
   @@map("time_entregas")
 }
 

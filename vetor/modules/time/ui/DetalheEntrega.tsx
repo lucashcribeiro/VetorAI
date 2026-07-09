@@ -1,22 +1,18 @@
 'use client'
 
-import { useTransition } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Badge } from '@/core/ui/Badge'
-import { Button } from '@/core/ui/Button'
 import { Card } from '@/core/ui/Card'
 import { labelStatusEntrega } from '../lib'
-import { aprovarEntregaAction } from '../server/actions'
 
 export function DetalheEntrega({
-  id,
   titulo,
   agente,
   tipo,
   status,
   conteudo,
   criadoEm,
+  rodadaId,
 }: {
   id: string
   titulo: string | null
@@ -25,14 +21,12 @@ export function DetalheEntrega({
   status: string
   conteudo: string
   criadoEm: string
+  rodadaId?: string | null
 }) {
-  const router = useRouter()
-  const [pending, start] = useTransition()
-
   return (
     <div style={{ maxWidth: 800 }}>
       <Link
-        href="/tools/time"
+        href={rodadaId ? `/tools/time/rodada/${rodadaId}` : '/tools/time'}
         style={{
           fontFamily: "var(--font-mono), 'JetBrains Mono', monospace",
           fontSize: 11,
@@ -40,10 +34,12 @@ export function DetalheEntrega({
           textDecoration: 'none',
         }}
       >
-        ← time vetor
+        ← {rodadaId ? 'rodada' : 'time vetor'}
       </Link>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, margin: '14px 0 10px', alignItems: 'center' }}>
-        <Badge tone={status === 'aprovado' ? 'dark' : 'accent'}>{labelStatusEntrega(status)}</Badge>
+        <Badge tone={status === 'aprovado' ? 'dark' : 'outline'}>
+          {labelStatusEntrega(status)}
+        </Badge>
         <Badge tone="outline">{agente}</Badge>
         <Badge tone="neutral">{tipo}</Badge>
         <span
@@ -70,25 +66,6 @@ export function DetalheEntrega({
       >
         {titulo ?? tipo}
       </h1>
-
-      {status === 'rascunho' && (
-        <div style={{ marginBottom: 16 }}>
-          <Button
-            type="button"
-            variant="primary"
-            disabled={pending}
-            onClick={() =>
-              start(async () => {
-                await aprovarEntregaAction(id)
-                router.refresh()
-              })
-            }
-          >
-            {pending ? 'Aprovando…' : 'Aprovar (checkpoint Lucas)'}
-          </Button>
-        </div>
-      )}
-
       <Card tone="white" elevated padding={28}>
         <pre
           style={{
