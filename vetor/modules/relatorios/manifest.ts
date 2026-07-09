@@ -9,4 +9,11 @@ export const manifest: ModuleManifest = {
   icone: IconRelatorios,
   status: 'disponivel',
   planoMinimo: 'essencial',
+  headlineVenda: 'O mês da sua empresa, em uma página que você entende.',
+  beneficios: [
+    'Números em língua de dono — sem CPL, sem ROAS na primeira tela',
+    'Você manda o CSV e o que já sabe; a IA escreve o resumo',
+    'Três ações prioritárias para o mês que vem',
+    'Pronto para imprimir ou mandar pro sócio',
+  ],
 }

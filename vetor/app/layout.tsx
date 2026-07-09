@@ -5,9 +5,21 @@ import { spaceGrotesk, workSans, jetbrainsMono } from "./fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "VETOR — plataforma",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://vetor.ai",
+  ),
+  title: {
+    default: "VETOR — ferramentas de IA que o dono opera",
+    template: "%s · VETOR",
+  },
   description:
-    "Ferramentas de IA sob medida que o próprio cliente opera. Direção + intensidade.",
+    "Consultoria de IA para pequenas empresas brasileiras. Ferramentas sob medida que o próprio cliente opera. Direção + intensidade.",
+  openGraph: {
+    siteName: "VETOR",
+    locale: "pt_BR",
+    type: "website",
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({

@@ -9,4 +9,11 @@ export const manifest: ModuleManifest = {
   icone: IconAnuncios,
   status: 'em_breve',
   planoMinimo: 'essencial',
+  headlineVenda: 'Saiba se o anúncio está barato ou caro em cliente novo — todo dia.',
+  beneficios: [
+    'Um número que importa: quanto custa trazer cada cliente',
+    'Alerta quando algo sai do eixo, antes de você perceber',
+    'Começa com CSV; API da Meta quando fizer sentido',
+    'Língua de dono, não de mídia',
+  ],
 }

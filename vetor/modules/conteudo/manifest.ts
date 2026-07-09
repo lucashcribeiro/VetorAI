@@ -9,4 +9,11 @@ export const manifest: ModuleManifest = {
   icone: IconConteudo,
   status: 'em_breve',
   planoMinimo: 'essencial',
+  headlineVenda: 'Posts prontos com a cara do seu negócio — você só aprova.',
+  beneficios: [
+    'Pauta semanal a partir do dossiê da sua empresa',
+    'Nada publica sozinho: você aprova em lote',
+    'Tom e conformidade pensados para o seu segmento',
+    'Menos “o que postar hoje?” e mais execução',
+  ],
 }

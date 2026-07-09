@@ -180,6 +180,23 @@ model RelatorioGerado {
   @@map("relatorios_gerados")
 }
 
+// Leads do site público (sem tenant — validação de demanda / diagnóstico).
+model Lead {
+  id       String   @id @default(cuid())
+  nome     String?
+  email    String
+  telefone String?
+  empresa  String?
+  origem   String // diagnostico | ferramenta | contato
+  moduleId String?  @map("module_id")
+  mensagem String?  @db.Text
+  criadoEm DateTime @default(now()) @map("criado_em")
+
+  @@index([criadoEm])
+  @@index([origem, moduleId])
+  @@map("leads")
+}
+
 // ── modules/zelo ──────────────────────────────────────────────────
 // Recepcionista assistida no WhatsApp (Fase 3 v1).
 // Status conversa: aguardando | respondida | escalada

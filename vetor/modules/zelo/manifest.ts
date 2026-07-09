@@ -9,4 +9,11 @@ export const manifest: ModuleManifest = {
   icone: IconZelo,
   status: 'beta',
   planoMinimo: 'completo',
+  headlineVenda: 'WhatsApp atendido com carinho — a IA sugere, a sua equipe decide.',
+  beneficios: [
+    'Sugestão de resposta em segundos, com tom da sua marca',
+    'Nada sai sem um toque de aprovação (v1 assistido)',
+    'Fila clara: quem espera, o que foi dito, o que fazer',
+    'Mede tempo de primeira resposta — métrica que vira valor',
+  ],
 }

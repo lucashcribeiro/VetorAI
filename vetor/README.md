@@ -1,6 +1,6 @@
 # VETOR — Plataforma
 
-Plataforma multi-tenant da consultoria VETOR. **Fases 0–3 implementadas**. O documento mestre do projeto é o `README-VETOR.md` na pasta pai.
+Plataforma multi-tenant da consultoria VETOR. **Fases 0–4 implementadas**. O documento mestre do projeto é o `README-VETOR.md` na pasta pai.
 
 ## O que já existe
 
@@ -26,9 +26,16 @@ Plataforma multi-tenant da consultoria VETOR. **Fases 0–3 implementadas**. O d
 - **Eventos** `zelo.conversa_iniciada`, `zelo.escalada_humano`.
 - **Simular mensagem** no portal (dev sem número Meta); envio real se `WHATSAPP_ACCESS_TOKEN` + `phoneNumberId` no `tenant_modules.config`.
 
+### Fase 4 — Site público + cardápio
+- **Landing** `/` em `app/(site)/` — hero, como funciona, preview do cardápio, CTA diagnóstico.
+- **Cardápio** `/ferramentas` lendo o `registry` (disponíveis vs em breve).
+- **Venda** `/ferramentas/[slug]` com benefícios do manifest + formulário de lead.
+- **Contato** `/contato` · **Leads** na tabela `leads` (migration `0004_leads`) + log estruturado.
+- **SEO:** `metadataBase`, `robots.ts`, `sitemap.xml`, `NEXT_PUBLIC_SITE_URL`.
+
 ## Subindo o ambiente
 
-1. **Neon:** `DATABASE_URL` → `npm run db:migrate` (0001–0003) → `npm run db:seed` (pilotos com relatorios + zelo).
+1. **Neon:** `DATABASE_URL` → `npm run db:migrate` (0001–0004) → `npm run db:seed` (pilotos com relatorios + zelo).
 2. **Clerk:** Organizations, webhook, `SUPER_ADMIN`.
 3. **Anthropic:** `ANTHROPIC_API_KEY` (relatórios e sugestões do Zelo).
 4. **WhatsApp** (opcional para E2E real):
@@ -55,6 +62,7 @@ npm run lint && npm run typecheck && npm run build
 | 1 | Criar tenant, ativar módulo, usuário vê só o ativo | ✓ | Neon + Clerk |
 | 2 | Gerar relatório, baixar HTML, dono entende | ✓ | + Anthropic |
 | 3 | Fila assistida: sugerir → aprovar; 1ª resposta medida | ✓ | + WhatsApp (ou simular no portal) |
+| 4 | Link do site para prospect sem vergonha | ✓ | Domínio + `NEXT_PUBLIC_SITE_URL` |
 
 ## Decisões locais
 
@@ -62,8 +70,10 @@ npm run lint && npm run typecheck && npm run build
 - Zelo v1 = **sempre humano no loop**; autônomo fica para v2/v3.
 - Sem token WhatsApp, "Aprovar e enviar" grava envio **simulado** (treina a operação).
 - Assinatura do webhook: se `WHATSAPP_APP_SECRET` ausente, aceita em dev (não use assim em produção).
+- Site e plataforma no **mesmo app** (ADR-005): cardápio lê o registry; login leva a `/tools/<slug>`.
+- Notificação de lead: log + tabela `leads` (e-mail Resend fica para depois).
 
 ## Próximas fases
 
-- **Fase 4:** site público + cardápio.
-- **Fase 5+:** Conteúdo, Monitor de Anúncios; Zelo v2 semiautônomo.
+- **Fase 5:** módulo Conteúdo (calendário + aprovação em lote).
+- **Fase 6:** Monitor de Anúncios; Zelo v2 semiautônomo.

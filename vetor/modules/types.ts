@@ -18,6 +18,10 @@ export interface ModuleManifest {
   icone: ComponentType<IconProps>
   status: ModuleStatus
   planoMinimo: 'essencial' | 'completo'
+  /** Headline da página de venda no site público (Fase 4). */
+  headlineVenda?: string
+  /** 3–5 benefícios em língua de dono. */
+  beneficios?: string[]
 }
 
 export interface ModuleUiProps {
