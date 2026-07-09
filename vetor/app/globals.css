@@ -1,0 +1,36 @@
+@import "tailwindcss";
+@import "../brand/tokens.css";
+
+@theme inline {
+  --color-carvao: var(--carvao);
+  --color-vermelho: var(--vermelho-vetor);
+  --color-pedra: var(--pedra);
+  --color-areia: var(--areia);
+  --color-osso: var(--osso);
+  --color-branco: var(--branco);
+  --color-erro: var(--erro);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+  --radius-page: 12px;
+  --radius-card: 10px;
+  --shadow-card: var(--shadow-card);
+}
+
+body {
+  background: var(--surface-page);
+  color: var(--text-primary);
+  font-family: var(--font-body), 'Work Sans', sans-serif;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+}
+
+::selection {
+  background: var(--vermelho-vetor);
+  color: var(--branco);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}

@@ -1,0 +1,85 @@
+/* VETOR — design tokens (fonte da verdade: Manual de identidade visual v1.0)
+   Regra de proporção: carvão + osso dominam (~80%); pedra + areia estruturam (~12%);
+   vermelho-vetor é raro e por isso pesa — CTAs, o ponto do símbolo, um acento por tela. Máx ~10%. */
+
+:root {
+  /* Paleta base */
+  --carvao: #171717;          /* dominante: texto, fundos escuros, logo */
+  --vermelho-vetor: #E04A1F;  /* ação e destaque — máx 10% de qualquer peça */
+  --pedra: #7A756C;           /* texto secundário */
+  --areia: #C9C4B8;           /* bordas, divisórias */
+  --osso: #F0EEE8;            /* fundo padrão */
+  --branco: #FFFFFF;          /* superfície alternativa em telas */
+  --erro: #B3261E;            /* anotação de erro/negativo */
+
+  /* Aliases semânticos */
+  --text-primary: var(--carvao);
+  --text-secondary: var(--pedra);
+  --text-inverse: var(--osso);
+  --text-accent: var(--vermelho-vetor);
+
+  --surface-page: var(--osso);
+  --surface-card: var(--branco);
+  --surface-dark: var(--carvao);
+  --surface-tile: var(--osso);
+
+  --accent: var(--vermelho-vetor);
+  --accent-hover: #C43F18;
+
+  --border-subtle: rgba(0, 0, 0, .12);
+  --divider: var(--areia);
+  --focus-ring: var(--vermelho-vetor);
+
+  /* Tipografia — as famílias (--font-display/--font-body/--font-mono)
+     são definidas pelo next/font em app/fonts.ts. Aqui, só a escala. */
+  --text-hero: 104px;
+  --text-display: 64px;
+  --text-h1: 34px;
+  --text-h2: 30px;
+  --text-h3: 24px;
+  --text-h4: 18px;
+  --text-lead: 17px;
+  --text-body: 15px;
+  --text-body-sm: 13px;
+  --text-caption: 12px;
+  --text-caption-sm: 11px;
+
+  --leading-tight: 1.1;
+  --leading-heading: 1.25;
+  --leading-body: 1.6;
+  --leading-relaxed: 1.7;
+
+  --tracking-wordmark: 0.02em;
+
+  --weight-display-bold: 700;
+  --weight-display-medium: 500;
+  --weight-body: 400;
+  --weight-body-medium: 500;
+  --weight-body-semibold: 600;
+
+  /* Raios de canto */
+  --radius-page: 12px;
+  --radius-card: 10px;
+  --radius-sm: 8px;
+  --radius-pill: 999px;
+
+  /* Sombras — suaves, baixas, só em artefatos "físicos" (cards, capas) */
+  --shadow-card: 0 3px 12px rgba(0, 0, 0, .08);
+  --shadow-card-dark: 0 3px 12px rgba(0, 0, 0, .12);
+
+  /* Barra de acento sob cabeçalhos de relatório */
+  --accent-rule-height: 3px;
+
+  /* Escala de espaçamento (px): 4, 8, 12, 16, 20, 24, 28, 32, 48, 56, 64 */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-10: 48px;
+  --space-12: 56px;
+  --space-14: 64px;
+}

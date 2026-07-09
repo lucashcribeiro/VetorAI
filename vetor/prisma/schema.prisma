@@ -1,0 +1,154 @@
+// VETOR — schema core multi-tenant (Fase 1).
+// Regra: toda tabela operacional tem tenant_id; o filtro é injetado
+// automaticamente pela extensão em core/db/client.ts (ADR-003).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../core/db/generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// A empresa cliente. Isolamento total de dados por tenant.
+model Tenant {
+  id          String   @id @default(cuid())
+  nome        String
+  slug        String   @unique
+  segmento    String?
+  logoUrl     String?  @map("logo_url")
+  corPrimaria String?  @map("cor_primaria")
+  plano       String   @default("essencial")
+  status      String   @default("ativo")
+  clerkOrgId  String?  @unique @map("clerk_org_id")
+  criadoEm    DateTime @default(now()) @map("criado_em")
+
+  modules     TenantModule[]
+  memberships Membership[]
+  atividades  ActivityLog[]
+  eventos     Event[]
+  usosDeIa    AiUsage[]
+  dossies     Dossie[]
+  agentRuns   AgentRun[]
+
+  @@map("tenants")
+}
+
+// Feature flags + nível de autonomia por módulo (config jsonb).
+model TenantModule {
+  id       String  @id @default(cuid())
+  tenantId String  @map("tenant_id")
+  moduleId String  @map("module_id")
+  ativo    Boolean @default(false)
+  config   Json    @default("{}")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, moduleId])
+  @@map("tenant_modules")
+}
+
+// Sincronizado do Clerk via webhook.
+model User {
+  id       String   @id @default(cuid())
+  clerkId  String   @unique @map("clerk_id")
+  email    String   @unique
+  nome     String
+  criadoEm DateTime @default(now()) @map("criado_em")
+
+  memberships Membership[]
+
+  @@map("users")
+}
+
+model Membership {
+  id       String @id @default(cuid())
+  tenantId String @map("tenant_id")
+  userId   String @map("user_id")
+  papel    String @default("MEMBER") // OWNER | MEMBER
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId])
+  @@map("memberships")
+}
+
+// Trilha de auditoria: quem aprovou o quê, com data e hora.
+model ActivityLog {
+  id       String   @id @default(cuid())
+  tenantId String   @map("tenant_id")
+  userId   String?  @map("user_id")
+  acao     String
+  detalhe  Json     @default("{}")
+  criadoEm DateTime @default(now()) @map("criado_em")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, criadoEm])
+  @@map("activity_log")
+}
+
+// Comunicação entre módulos (ADR-002): publica aqui, o outro consome.
+model Event {
+  id         String   @id @default(cuid())
+  tenantId   String   @map("tenant_id")
+  tipo       String
+  payload    Json     @default("{}")
+  processado Boolean  @default(false)
+  criadoEm   DateTime @default(now()) @map("criado_em")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([processado, tipo])
+  @@index([tenantId, criadoEm])
+  @@map("events")
+}
+
+// Margem real por cliente: tokens e custo de cada chamada de IA.
+model AiUsage {
+  id        String   @id @default(cuid())
+  tenantId  String   @map("tenant_id")
+  moduleId  String   @map("module_id")
+  modelo    String
+  tokensIn  Int      @map("tokens_in")
+  tokensOut Int      @map("tokens_out")
+  custoBrl  Decimal  @map("custo_brl") @db.Decimal(10, 4)
+  criadoEm  DateTime @default(now()) @map("criado_em")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, criadoEm])
+  @@map("ai_usage")
+}
+
+// Dossiê do Cliente — contexto compartilhado de todos os agentes.
+model Dossie {
+  id           String   @id @default(cuid())
+  tenantId     String   @map("tenant_id")
+  versao       Int      @default(1)
+  conteudo     Json     @default("{}")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, versao])
+  @@map("dossies")
+}
+
+// Execuções dos agentes (kick off, mídia, criativos, ...).
+model AgentRun {
+  id          String    @id @default(cuid())
+  tenantId    String    @map("tenant_id")
+  agente      String
+  status      String    @default("rodando") // rodando | concluido | erro
+  iniciadoEm  DateTime  @default(now()) @map("iniciado_em")
+  terminadoEm DateTime? @map("terminado_em")
+  erro        String?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, iniciadoEm])
+  @@map("agent_runs")
+}
