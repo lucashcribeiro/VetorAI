@@ -32,6 +32,8 @@ model Tenant {
   dossies     Dossie[]
   agentRuns   AgentRun[]
   relatorios  RelatorioGerado[]
+  zeloConversas ZeloConversa[]
+  zeloMensagens ZeloMensagem[]
 
   @@map("tenants")
 }
@@ -176,4 +178,48 @@ model RelatorioGerado {
   @@index([tenantId, mes])
   @@index([tenantId, criadoEm])
   @@map("relatorios_gerados")
+}
+
+// ── modules/zelo ──────────────────────────────────────────────────
+// Recepcionista assistida no WhatsApp (Fase 3 v1).
+// Status conversa: aguardando | respondida | escalada
+// Direção mensagem: entrada | saida | sugestao
+model ZeloConversa {
+  id                    String    @id @default(cuid())
+  tenantId              String    @map("tenant_id")
+  waId                  String    @map("wa_id") // telefone E.164 sem +
+  nomeContato           String?   @map("nome_contato")
+  status                String    @default("aguardando")
+  primeiraMsgEm         DateTime  @map("primeira_msg_em")
+  ultimaMsgEm           DateTime  @map("ultima_msg_em")
+  primeiraRespostaEm    DateTime? @map("primeira_resposta_em")
+  tempoPrimeiraRespostaMs Int?    @map("tempo_primeira_resposta_ms")
+  criadoEm              DateTime  @default(now()) @map("criado_em")
+  atualizadoEm          DateTime  @updatedAt @map("atualizado_em")
+
+  tenant    Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  mensagens ZeloMensagem[]
+
+  @@unique([tenantId, waId])
+  @@index([tenantId, status, ultimaMsgEm])
+  @@map("zelo_conversas")
+}
+
+model ZeloMensagem {
+  id           String   @id @default(cuid())
+  tenantId     String   @map("tenant_id")
+  conversaId   String   @map("conversa_id")
+  direcao      String // entrada | saida | sugestao
+  corpo        String   @db.Text
+  waMessageId  String?  @unique @map("wa_message_id")
+  status       String   @default("recebida") // recebida | pendente | aprovada | descartada | enviada | erro
+  aprovadaPorId String? @map("aprovada_por_id")
+  criadoEm     DateTime @default(now()) @map("criado_em")
+
+  tenant   Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  conversa ZeloConversa @relation(fields: [conversaId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, conversaId, criadoEm])
+  @@index([tenantId, status])
+  @@map("zelo_mensagens")
 }

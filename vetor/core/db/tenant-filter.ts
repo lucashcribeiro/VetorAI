@@ -10,6 +10,8 @@ const TENANT_SCOPED_MODELS = new Set([
   'Dossie',
   'AgentRun',
   'RelatorioGerado',
+  'ZeloConversa',
+  'ZeloMensagem',
 ])
 
 // Operações cujo `where` aceita filtro arbitrário.

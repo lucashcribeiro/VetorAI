@@ -7,6 +7,6 @@ export const manifest: ModuleManifest = {
   nome: 'Zelo',
   descricao: 'Recepcionista de IA no WhatsApp: atende, qualifica e agenda — com a sua equipe aprovando cada resposta no começo.',
   icone: IconZelo,
-  status: 'em_breve',
+  status: 'beta',
   planoMinimo: 'completo',
 }

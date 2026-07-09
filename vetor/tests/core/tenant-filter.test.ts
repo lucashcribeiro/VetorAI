@@ -14,6 +14,8 @@ describe('isTenantScoped', () => {
       'Dossie',
       'AgentRun',
       'RelatorioGerado',
+      'ZeloConversa',
+      'ZeloMensagem',
     ]) {
       expect(isTenantScoped(m)).toBe(true)
     }
