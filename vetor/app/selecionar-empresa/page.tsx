@@ -1,15 +1,134 @@
-import { OrganizationList } from '@clerk/nextjs'
+import Link from 'next/link'
 import { Logo } from '@/core/ui/Logo'
+import { Card } from '@/core/ui/Card'
+import { Button } from '@/core/ui/Button'
+import { requireUser } from '@/core/auth/guards'
+import { db } from '@/core/db/client'
+import { escolherEmpresa } from './actions'
+import { logoutAction } from '@/app/(auth)/actions'
 
-// Usuário logado sem organização ativa: escolhe (ou cria) a empresa.
-export default function SelecionarEmpresaPage() {
+export default async function SelecionarEmpresaPage() {
+  const user = await requireUser()
+
+  const memberships = await db.membership.findMany({
+    where: { userId: user.id },
+    include: { tenant: true },
+    orderBy: { tenant: { nome: 'asc' } },
+  })
+
+  // SUPER_ADMIN vê todos os tenants ativos.
+  const tenants =
+    user.role === 'SUPER_ADMIN'
+      ? await db.tenant.findMany({
+          where: { status: 'ativo' },
+          orderBy: { nome: 'asc' },
+        })
+      : memberships.map((m) => m.tenant)
+
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center gap-8 px-6">
+    <main
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 24,
+        gap: 24,
+      }}
+    >
       <Logo variant="full" tone="positive" size={28} />
-      <p className="text-pedra" style={{ fontSize: 'var(--text-body)' }}>
-        Escolha a empresa para entrar na plataforma.
-      </p>
-      <OrganizationList afterSelectOrganizationUrl="/dashboard" hidePersonal />
+      <div style={{ width: '100%', maxWidth: 440 }}>
+        <h1
+          style={{
+            fontFamily: "var(--font-display), 'Space Grotesk', sans-serif",
+            fontWeight: 700,
+            fontSize: 24,
+            margin: '0 0 8px',
+            textAlign: 'center',
+          }}
+        >
+          Escolha a empresa
+        </h1>
+        <p style={{ margin: '0 0 20px', textAlign: 'center', color: 'var(--pedra)', fontSize: 14 }}>
+          Olá, {user.nome.split(' ')[0]}. Em qual empresa você quer entrar?
+        </p>
+
+        {tenants.length === 0 ? (
+          <Card tone="osso" padding={24}>
+            <p style={{ margin: 0, color: 'var(--pedra)', fontSize: 14, textAlign: 'center' }}>
+              Você ainda não está em nenhuma empresa. Peça ao admin da VETOR ou ao dono para te
+              convidar.
+            </p>
+          </Card>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {tenants.map((t) => (
+              <form key={t.id} action={escolherEmpresa.bind(null, t.id)}>
+                <Card
+                  tone="white"
+                  elevated
+                  padding={18}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 12,
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        fontFamily: "var(--font-display), 'Space Grotesk', sans-serif",
+                        fontWeight: 700,
+                        fontSize: 16,
+                      }}
+                    >
+                      {t.nome}
+                    </div>
+                    {t.segmento && (
+                      <div
+                        style={{
+                          fontFamily: "var(--font-mono), 'JetBrains Mono', monospace",
+                          fontSize: 11,
+                          color: 'var(--pedra)',
+                          marginTop: 4,
+                        }}
+                      >
+                        {t.segmento}
+                      </div>
+                    )}
+                  </div>
+                  <Button type="submit" variant="primary" size="sm">
+                    Entrar
+                  </Button>
+                </Card>
+              </form>
+            ))}
+          </div>
+        )}
+
+        <div style={{ marginTop: 24, display: 'flex', justifyContent: 'center', gap: 16 }}>
+          <Link href="/" style={{ fontSize: 13, color: 'var(--pedra)' }}>
+            Site
+          </Link>
+          <form action={logoutAction}>
+            <button
+              type="submit"
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--pedra)',
+                fontSize: 13,
+                cursor: 'pointer',
+                textDecoration: 'underline',
+              }}
+            >
+              Sair
+            </button>
+          </form>
+        </div>
+      </div>
     </main>
   )
 }

@@ -1,22 +1,19 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { clerkClient } from '@clerk/nextjs/server'
 import { requireSuperAdmin } from '@/core/auth/guards'
 import { db } from '@/core/db/client'
 
 function slugify(texto: string): string {
   return texto
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '')
 }
 
-// Provisionar empresa: cria a organização no Clerk (quando configurado)
-// e o tenant no banco. Sem Clerk real, cria só no banco — o vínculo
-// clerk_org_id chega depois via webhook ou edição.
+/** Provisionar empresa só no banco (sem SaaS de auth). */
 export async function criarTenant(formData: FormData) {
   await requireSuperAdmin()
 
@@ -26,31 +23,21 @@ export async function criarTenant(formData: FormData) {
 
   const slug = slugify(String(formData.get('slug') ?? '') || nome)
 
-  let clerkOrgId: string | null = null
-  try {
-    const clerk = await clerkClient()
-    const org = await clerk.organizations.createOrganization({ name: nome, slug })
-    clerkOrgId = org.id
-  } catch (erro) {
-    console.warn('[admin] clerk indisponível — tenant criado só no banco', erro)
-  }
-
   const tenant = await db.tenant.create({
-    data: { nome, slug, segmento, clerkOrgId },
+    data: { nome, slug, segmento },
   })
 
   await db.activityLog.create({
     data: {
       tenantId: tenant.id,
       acao: 'tenant.provisionado',
-      detalhe: { origem: 'admin', clerkOrgId },
+      detalhe: { origem: 'admin' },
     },
   })
 
   revalidatePath('/admin/tenants')
 }
 
-// Liga/desliga módulo por tenant (feature flag em tenant_modules).
 export async function alternarModulo(tenantId: string, moduleId: string, ativo: boolean) {
   await requireSuperAdmin()
 

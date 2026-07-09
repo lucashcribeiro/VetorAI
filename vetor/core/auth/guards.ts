@@ -1,31 +1,54 @@
 import 'server-only'
-import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
+import { auth } from '@/auth'
 import { db } from '@/core/db/client'
-import { atLeast, papelFromClerkRole, type Role } from './roles'
-import type { Tenant } from '@/core/db/generated/client'
+import { atLeast, asRole, type Role } from './roles'
+import { getActiveTenantIdFromCookie } from './tenant-cookie'
+import type { Tenant, User } from '@/core/db/generated/client'
 
-// Sessão obrigatória — sem login, manda para o sign-in.
-export async function requireUser() {
-  const { userId, orgId, orgRole, sessionClaims } = await auth()
-  if (!userId) redirect('/sign-in')
-  return { clerkUserId: userId, orgId, orgRole, sessionClaims }
+export async function requireUser(): Promise<User> {
+  const session = await auth()
+  if (!session?.user?.id) redirect('/sign-in')
+  const user = await db.user.findUnique({ where: { id: session.user.id } })
+  if (!user) redirect('/sign-in')
+  return user
 }
 
-// Tenant da sessão (organização ativa do Clerk). Sem org → seleção de empresa.
+export async function currentUserDb(): Promise<User | null> {
+  const session = await auth()
+  if (!session?.user?.id) return null
+  return db.user.findUnique({ where: { id: session.user.id } })
+}
+
+/** Tenant ativo: cookie vetor_tenant + membership (ou SUPER_ADMIN). */
 export async function requireTenant(): Promise<Tenant> {
-  const { orgId } = await requireUser()
-  if (!orgId) redirect('/dashboard/selecionar-empresa')
-  const tenant = await db.tenant.findUnique({ where: { clerkOrgId: orgId } })
-  if (!tenant) redirect('/dashboard/selecionar-empresa')
+  const user = await requireUser()
+  const tenantId = await getActiveTenantIdFromCookie()
+  if (!tenantId) redirect('/selecionar-empresa')
+
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
+  if (!tenant) redirect('/selecionar-empresa')
+
+  if (user.role === 'SUPER_ADMIN') return tenant
+
+  const membership = await db.membership.findUnique({
+    where: { tenantId_userId: { tenantId: tenant.id, userId: user.id } },
+  })
+  if (!membership) redirect('/selecionar-empresa')
   return tenant
 }
 
-// Papel do usuário no tenant atual, derivado do papel de organização do Clerk.
 export async function currentRole(): Promise<Role> {
-  const { orgRole } = await requireUser()
-  if (await isSuperAdmin()) return 'SUPER_ADMIN'
-  return papelFromClerkRole(orgRole ?? '')
+  const user = await requireUser()
+  if (user.role === 'SUPER_ADMIN') return 'SUPER_ADMIN'
+
+  const tenantId = await getActiveTenantIdFromCookie()
+  if (!tenantId) return 'MEMBER'
+
+  const membership = await db.membership.findUnique({
+    where: { tenantId_userId: { tenantId, userId: user.id } },
+  })
+  return asRole(membership?.papel)
 }
 
 export async function requireRole(minimo: Role): Promise<{ tenant: Tenant; role: Role }> {
@@ -35,21 +58,23 @@ export async function requireRole(minimo: Role): Promise<{ tenant: Tenant; role:
   return { tenant, role }
 }
 
-// SUPER_ADMIN vem do publicMetadata do usuário no Clerk (README Fase 1).
 export async function isSuperAdmin(): Promise<boolean> {
-  const { sessionClaims } = await auth()
-  const metadata = (sessionClaims?.metadata ?? {}) as { role?: string }
-  return metadata.role === 'SUPER_ADMIN'
+  const session = await auth()
+  if (!session?.user?.id) return false
+  if (session.user.role === 'SUPER_ADMIN') return true
+  const user = await db.user.findUnique({ where: { id: session.user.id } })
+  return user?.role === 'SUPER_ADMIN'
 }
 
-export async function requireSuperAdmin(): Promise<void> {
-  const { userId } = await auth()
-  if (!userId) redirect('/sign-in')
-  if (!(await isSuperAdmin())) redirect('/dashboard')
+export async function requireSuperAdmin(): Promise<User> {
+  const user = await requireUser()
+  if (user.role !== 'SUPER_ADMIN') redirect('/dashboard')
+  return user
 }
 
-// Guard da rota genérica de ferramentas: tenant + estado do módulo.
-export async function requireModule(moduleId: string): Promise<{ tenant: Tenant; ativo: boolean }> {
+export async function requireModule(
+  moduleId: string,
+): Promise<{ tenant: Tenant; ativo: boolean }> {
   const tenant = await requireTenant()
   const tm = await db.tenantModule.findUnique({
     where: { tenantId_moduleId: { tenantId: tenant.id, moduleId } },

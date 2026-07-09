@@ -1,10 +1,9 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { auth } from '@clerk/nextjs/server'
 import { requireTenantContext } from '@/core/tenant/context'
+import { currentUserDb } from '@/core/auth/guards'
 import { isModuleActive } from '@/core/tenant/modules'
-import { db } from '@/core/db/client'
 import {
   aprovarEEnviar,
   escalarConversa,
@@ -20,9 +19,7 @@ async function guardZelo() {
 }
 
 async function currentUserDbId(): Promise<string | null> {
-  const { userId } = await auth()
-  if (!userId) return null
-  const u = await db.user.findUnique({ where: { clerkId: userId } })
+  const u = await currentUserDb()
   return u?.id ?? null
 }
 

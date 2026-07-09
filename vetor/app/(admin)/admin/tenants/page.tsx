@@ -43,7 +43,6 @@ export default async function AdminTenantsPage() {
                     {t.modules.length} {t.modules.length === 1 ? 'módulo' : 'módulos'}
                   </Badge>
                   <Badge tone={t.status === 'ativo' ? 'dark' : 'outline'}>{t.status}</Badge>
-                  {!t.clerkOrgId && <Badge tone="accent">sem clerk</Badge>}
                 </div>
               </Card>
             </Link>

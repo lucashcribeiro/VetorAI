@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import { currentUser } from '@clerk/nextjs/server'
 import { requireTenantContext } from '@/core/tenant/context'
+import { currentUserDb } from '@/core/auth/guards'
 import { getActiveModuleIds } from '@/core/tenant/modules'
 import { registry, getModuleById } from '@/modules/registry'
 import { db } from '@/core/db/client'
@@ -26,7 +26,7 @@ const monoFont = {
 
 export default async function DashboardPage() {
   const tenant = await requireTenantContext()
-  const user = await currentUser()
+  const user = await currentUserDb()
   const ativos = await getActiveModuleIds(tenant.id)
 
   const [pendentes, atividades] = await Promise.all([
@@ -78,7 +78,7 @@ export default async function DashboardPage() {
         </div>
         <h1 style={{ ...displayFont, fontSize: 'var(--text-h1)', margin: '12px 0 6px', lineHeight: 1.15 }}>
           {saudacao(Number(new Intl.DateTimeFormat('pt-BR', { hour: 'numeric', hour12: false, timeZone: 'America/Sao_Paulo' }).format(agora)))}
-          {user?.firstName ? `, ${user.firstName}.` : '.'}
+          {user?.nome ? `, ${user.nome.split(' ')[0]}.` : '.'}
         </h1>
         <p style={{ margin: 0, color: 'var(--pedra)' }}>
           {pendentes > 0 ? (

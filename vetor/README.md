@@ -9,7 +9,7 @@ Plataforma multi-tenant da consultoria VETOR. **Fases 0–4 implementadas**. O d
 - **Proteção de fronteiras**: ESLint (`eslint-plugin-boundaries`) **falha o build** se um módulo importar de outro ou se `core/` importar de `modules/`/`app/`. CI em `.github/workflows/ci.yml` roda lint + typecheck + testes + build em todo push/PR.
 - **Banco (Prisma 7 + Postgres)**: tabelas core + módulos; migrações em `prisma/migrations/`; seed com os dois pilotos.
 - **Isolamento por tenant (ADR-003)**: `tenantDb(tenantId)` injeta `tenant_id` automaticamente.
-- **Auth (Clerk Organizations)**: middleware, webhook, papéis `SUPER_ADMIN | OWNER | MEMBER`.
+- **Auth (Auth.js)**: email/senha no próprio Postgres, papéis `SUPER_ADMIN | OWNER | MEMBER`, cookie de tenant ativo.
 - **Registry de módulos** + AppShell + rota genérica `tools/[slug]/[[...path]]` + admin de tenants.
 - **core/ai** + **core/events**.
 
@@ -35,8 +35,12 @@ Plataforma multi-tenant da consultoria VETOR. **Fases 0–4 implementadas**. O d
 
 ## Subindo o ambiente
 
-1. **Neon:** `DATABASE_URL` → `npm run db:migrate` (0001–0004) → `npm run db:seed` (pilotos com relatorios + zelo).
-2. **Clerk:** Organizations, webhook, `SUPER_ADMIN`.
+1. **Neon (Postgres serverless):** crie o projeto em [console.neon.tech](https://console.neon.tech), copie a connection string pooled (`?sslmode=require`) para `DATABASE_URL` em `.env` e `.env.local`. Depois:
+   ```bash
+   npm run db:migrate   # 0001–0005 (core, relatórios, zelo, leads, auth)
+   npm run db:seed      # pilotos + admin@vetor.local
+   ```
+2. **Auth.js:** `AUTH_SECRET` (`openssl rand -base64 32`). Seed cria `admin@vetor.local` / `vetor-admin-2026` (ou `SEED_ADMIN_*`). Sem Clerk — login no seu banco.
 3. **Anthropic:** `ANTHROPIC_API_KEY` (relatórios e sugestões do Zelo).
 4. **WhatsApp** (opcional para E2E real):
    - App Meta + número Cloud API
@@ -46,20 +50,23 @@ Plataforma multi-tenant da consultoria VETOR. **Fases 0–4 implementadas**. O d
      ```json
      { "phoneNumberId": "…", "accessToken": "EAA…" }
      ```
-     (ou `WHATSAPP_ACCESS_TOKEN` + `WHATSAPP_PHONE_NUMBER_ID` globais em dev)
 5. **Trigger.dev** (opcional, relatórios).
+6. **Vercel (produção):** projeto `vetor` ligado na pasta `vetor/`; envs `DATABASE_URL` (Neon), `AUTH_SECRET`, `AUTH_URL`, `NEXT_PUBLIC_SITE_URL`. Deploy: `npx vercel --prod` a partir de `vetor/`.
 
 ```bash
 npm run dev
 npm test
 npm run lint && npm run typecheck && npm run build
+npx vercel --prod   # publica em vercel.app
 ```
+
+**Stack de deploy:** Neon (Postgres) + Vercel (Next.js) + Auth.js (login no seu banco).
 
 ## Critérios de pronto
 
 | Fase | Critério | Código | Contas reais |
 |------|----------|--------|--------------|
-| 1 | Criar tenant, ativar módulo, usuário vê só o ativo | ✓ | Neon + Clerk |
+| 1 | Criar tenant, ativar módulo, usuário vê só o ativo | ✓ | Postgres + Auth.js |
 | 2 | Gerar relatório, baixar HTML, dono entende | ✓ | + Anthropic |
 | 3 | Fila assistida: sugerir → aprovar; 1ª resposta medida | ✓ | + WhatsApp (ou simular no portal) |
 | 4 | Link do site para prospect sem vergonha | ✓ | Domínio + `NEXT_PUBLIC_SITE_URL` |

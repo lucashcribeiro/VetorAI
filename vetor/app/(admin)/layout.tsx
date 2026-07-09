@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { requireSuperAdmin } from '@/core/auth/guards'
 import { Logo } from '@/core/ui/Logo'
 
-// Área (admin) — só eu (SUPER_ADMIN via publicMetadata do Clerk).
+// Área (admin) — só SUPER_ADMIN (User.role no banco).
 // ADR-004: aqui vive a saúde dos tenants, nunca os dados operacionais deles.
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   await requireSuperAdmin()

@@ -21,7 +21,6 @@ model Tenant {
   corPrimaria String?  @map("cor_primaria")
   plano       String   @default("essencial")
   status      String   @default("ativo")
-  clerkOrgId  String?  @unique @map("clerk_org_id")
   criadoEm    DateTime @default(now()) @map("criado_em")
 
   modules     TenantModule[]
@@ -52,13 +51,15 @@ model TenantModule {
   @@map("tenant_modules")
 }
 
-// Sincronizado do Clerk via webhook.
+// Usuário da plataforma (Auth.js — credenciais no próprio banco).
+// role: MEMBER | SUPER_ADMIN (SUPER_ADMIN = operador VETOR, cross-tenant admin).
 model User {
-  id       String   @id @default(cuid())
-  clerkId  String   @unique @map("clerk_id")
-  email    String   @unique
-  nome     String
-  criadoEm DateTime @default(now()) @map("criado_em")
+  id           String   @id @default(cuid())
+  email        String   @unique
+  nome         String
+  passwordHash String   @map("password_hash")
+  role         String   @default("MEMBER") // MEMBER | SUPER_ADMIN
+  criadoEm     DateTime @default(now()) @map("criado_em")
 
   memberships Membership[]
 

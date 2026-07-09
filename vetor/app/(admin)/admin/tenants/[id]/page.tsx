@@ -41,8 +41,7 @@ export default async function AdminTenantDetalhe({
         </h1>
         <div style={{ ...monoFont, fontSize: 11, color: 'var(--pedra)' }}>
           {tenant.slug}
-          {tenant.segmento ? ` · ${tenant.segmento}` : ''} · plano {tenant.plano} ·{' '}
-          {tenant.clerkOrgId ? `clerk ${tenant.clerkOrgId}` : 'sem organização clerk'}
+          {tenant.segmento ? ` · ${tenant.segmento}` : ''} · plano {tenant.plano}
         </div>
       </div>
 

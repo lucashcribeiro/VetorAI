@@ -2,10 +2,9 @@
 
 import { after } from 'next/server'
 import { revalidatePath } from 'next/cache'
-import { auth } from '@clerk/nextjs/server'
 import { requireTenantContext } from '@/core/tenant/context'
+import { currentUserDb } from '@/core/auth/guards'
 import { isModuleActive } from '@/core/tenant/modules'
-import { db } from '@/core/db/client'
 import { criarRelatorio } from '../db'
 import {
   parseNumeroBr,
@@ -94,12 +93,8 @@ export async function solicitarGeracaoRelatorio(
     }
   }
 
-  const { userId: clerkUserId } = await auth()
-  let criadoPorId: string | null = null
-  if (clerkUserId) {
-    const user = await db.user.findUnique({ where: { clerkId: clerkUserId } })
-    criadoPorId = user?.id ?? null
-  }
+  const user = await currentUserDb()
+  const criadoPorId = user?.id ?? null
 
   const dadosEntrada = {
     numeros,
